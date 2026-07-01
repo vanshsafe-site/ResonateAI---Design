@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResonateAI - Deep Reasoning at Scale</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #07080f;
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ==================== NAVBAR ==================== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            background: transparent;
+            transition: all 0.4s ease;
+            padding: 18px 24px;
+        }
+
+        nav.scrolled {
+            background: rgba(7, 8, 15, 0.92);
+            backdrop-filter: blur(24px) saturate(160%);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+            padding: 12px 24px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6366f1;
+            cursor: pointer;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #6366f1;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: #6366f1;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            width: 24px;
+            height: 2px;
+            background: #fff;
+            transition: all 0.3s;
+        }
+
+        /* ==================== HERO ==================== */
+        .hero {
+            display: none;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-top: 60px;
+        }
+
+        .hero.active {
+            display: flex;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.035;
+            background-image: linear-gradient(rgba(99,102,241,0.8) 1px,transparent 1px), linear-gradient(90deg,rgba(99,102,241,0.8) 1px,transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+
+        .hero-glow {
+            position: absolute;
+            pointer-events: none;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(700px, 100vw);
+            height: 400px;
+            border-radius: 50%;
+            filter: blur(100px);
+            background: rgba(99, 102, 241, 0.12);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 720px;
+            width: 100%;
+        }
+
+        .hero-logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .logo-circle {
+            width: clamp(64px, 10vw, 92px);
+            height: clamp(64px, 10vw, 92px);
+            background: conic-gradient(from 0deg, #6366f1, #8b5cf6, #e879f9, #06b6d4, #6366f1);
+            border-radius: 50%;
+            animation: spin 5s linear infinite;
+            filter: blur(5px);
+            opacity: 0.7;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero h1 {
+            font-size: clamp(28px, 6vw, 56px);
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-family: 'Syne', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-highlight {
+            color: #6366f1;
+        }
+
+        .hero .typing-text {
+            color: #8b5cf6;
+            min-height: 1.2em;
+        }
+
+        .hero p {
+            font-size: clamp(14px, 2vw, 16px);
+            color: rgba(255, 255, 255, 0.6);
+            margin: 24px 0 32px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 32px;
+        }
+
+        /* ==================== FEATURES ==================== */
+        .features {
+            display: none;
+            padding: clamp(48px, 8vw, 112px) clamp(16px, 5vw, 24px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .features.active {
+            display: block;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .features-header p {
+            color: #818cf8;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .features-header h2 {
+            font-size: clamp(26px, 5vw, 48px);
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .features-header .subtitle {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-card {
+            position: relative;
+            padding: 32px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.015);
+            cursor: default;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.03);
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #6366f1;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(-3deg);
+        }
+
+        .feature-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .feature-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #6366f1;
+            margin-bottom: 8px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 12px;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .feature-desc {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .feature-number {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            font-family: 'Syne', sans-serif;
+            font-size: 72px;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.025);
+            user-select: none;
+            line-height: 1;
+        }
+
+        /* ==================== PRICING PAGE ==================== */
+        .pricing-page {
+            display: none;
+            padding: clamp(48px, 8vw, 112px) clamp(16px, 5vw, 24px);
+            margin-top: 60px;
+            min-height: 100vh;
+        }
+
+        .pricing-page.active {
+            display: block;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .pricing-header h1 {
+            font-size: clamp(32px, 6vw, 52px);
+            font-weight: 700;
+            margin-bottom: 16px;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .pricing-header p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-bottom: 64px;
+        }
+
+        .pricing-card {
+            padding: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+            background: rgba(99, 102, 241, 0.05);
+            transform: translateY(-5px);
+        }
+
+        .pricing-card.highlight {
+            border: 1px solid rgba(99, 102, 241, 0.5);
+            background: rgba(99, 102, 241, 0.08);
+            transform: scale(1.05);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .pricing-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .pricing-price {
+            font-size: 32px;
+            font-weight: 700;
+            color: #6366f1;
+            margin-bottom: 8px;
+        }
+
+        .pricing-period {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            margin-bottom: 24px;
+        }
+
+        .pricing-desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .pricing-features li {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: #6366f1;
+            font-weight: 700;
+        }
+
+        /* ==================== PROFILE PAGE ==================== */
+        .profile-page {
+            display: none;
+            padding: clamp(48px, 8vw, 112px) clamp(16px, 5vw, 24px);
+            margin-top: 60px;
+            min-height: 100vh;
+        }
+
+        .profile-page.active {
+            display: block;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 48px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .profile-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .profile-tabs {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .profile-tab {
+            padding: 16px 0;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+            transition: all 0.3s;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .profile-tab:hover, .profile-tab.active {
+            color: #6366f1;
+            border-bottom-color: #6366f1;
+        }
+
+        .profile-content {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .profile-content.active {
+            display: block;
+        }
+
+        .profile-form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group.full {
+            grid-template-columns: 1fr;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-field label {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-field input, .form-field select {
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .form-field input:focus, .form-field select:focus {
+            border-color: rgba(99, 102, 241, 0.6);
+        }
+
+        /* ==================== CHAT/APP PAGE ==================== */
+        .chat-page {
+            display: none;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #07080f;
+            margin-top: 0;
+        }
+
+        .chat-page.active {
+            display: flex;
+        }
+
+        .chat-container {
+            display: flex;
+            height: 100%;
+            gap: 0;
+        }
+
+        .chat-sidebar {
+            width: 260px;
+            background: rgba(0, 0, 0, 0.3);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .chat-new-btn {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 24px;
+            transition: all 0.3s;
+        }
+
+        .chat-new-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .chat-history {
+            flex: 1;
+        }
+
+        .chat-history-item {
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .chat-history-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: #fff;
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 16px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 60%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+        }
+
+        .message.ai .message-content {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .code-block {
+            background: #000;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 8px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .code-content {
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #a1e4a9;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .chat-input-area {
+            padding: 20px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 12px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .chat-input:focus {
+            border-color: rgba(99, 102, 241, 0.6);
+        }
+
+        .chat-send-btn {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .chat-send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* ==================== AUTH MODAL ==================== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 300;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: rgba(20, 20, 35, 0.95);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            padding: 48px;
+            max-width: 450px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .modal-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .modal-header p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
+        .modal-tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .modal-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 2px solid transparent;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'DM Sans', sans-serif;
+            border-radius: 8px;
+        }
+
+        .modal-tab.active {
+            background: rgba(99, 102, 241, 0.2);
+            color: #6366f1;
+            border-bottom-color: #6366f1;
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .modal-input {
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .modal-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-input:focus {
+            border-color: rgba(99, 102, 241, 0.6);
+        }
+
+        .modal-button {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .modal-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .modal-footer a {
+            color: #6366f1;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* ==================== FOOTER ==================== */
+        footer {
+            background: #030305;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding: clamp(48px, 6vw, 72px) 24px 0;
+            margin-top: 60px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 48px;
+        }
+
+        .footer-section h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .footer-section a:hover {
+            color: #6366f1;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 16px;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            background: rgba(99, 102, 241, 0.2);
+            color: #6366f1;
+        }
+
+        /* ==================== OTHER PAGES ==================== */
+        .page {
+            display: none;
+            margin-top: 60px;
+            min-height: 100vh;
+            padding: 60px 24px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .page p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.highlight {
+                transform: scale(1);
+            }
+
+            .chat-sidebar {
+                width: 200px;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .modal {
+                padding: 32px 24px;
+            }
+
+            .form-group, .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="navigateTo('home')">ResonateAI</div>
+            <div class="nav-links">
+                <a onclick="scrollToSection('features')">Features</a>
+                <a onclick="scrollToSection('process')">Process</a>
+                <a onclick="scrollToSection('use-cases')">Use Cases</a>
+                <a onclick="navigateTo('pricing')">Pricing</a>
+                <a onclick="navigateTo('about')">About</a>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" onclick="showAuthModal('signin')">Sign In</button>
+                <button class="btn btn-primary" onclick="showAuthModal('getstarted')">Get Started</button>
+            </div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero active" id="home">
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+            <div class="hero-logo">
+                <div class="logo-circle"></div>
+            </div>
+            <h1>ResonateAI <span class="hero-highlight">truly</span> <span class="typing-text" id="typingText">reasons.</span></h1>
+            <p>Deep multi-step reasoning meets real-time inference. Get transparent, verifiable answers backed by structured logic—not hallucinations.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="showAuthModal('getstarted')">Get Started Free</button>
+                <button class="btn btn-secondary" onclick="scrollToSection('features')">Learn More</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features" id="features">
+        <div class="features-header">
+            <p>Core Capabilities</p>
+            <h2>Built different. <span class="subtitle">By design.</span></h2>
+            <p style="color: rgba(255, 255, 255, 0.4); margin-top: 16px;">Advanced reasoning capabilities that set us apart from standard LLMs.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                </div>
+                <p class="feature-label">Deep Reasoning Engine</p>
+                <h3 class="feature-title">Multi-Step Logic Processing</h3>
+                <p class="feature-desc">Unlike standard LLMs, ResonateAI chains reasoning steps sequentially — evaluating premises, spotting contradictions, and arriving at verified conclusions.</p>
+                <div class="feature-number">01</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+                </div>
+                <p class="feature-label">Contextual Memory</p>
+                <h3 class="feature-title">Persistent Knowledge Graph</h3>
+                <p class="feature-desc">Your context never resets. ResonateAI builds a living knowledge graph from every session — learning your terminology, goals, and preferences over time.</p>
+                <div class="feature-number">02</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                </div>
+                <p class="feature-label">Verifiable Outputs</p>
+                <h3 class="feature-title">Cite-Backed Conclusions</h3>
+                <p class="feature-desc">Every answer comes with a transparent reasoning trace. See exactly which sources, steps, and logical rules produced each conclusion — no black boxes.</p>
+                <div class="feature-number">03</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </div>
+                <p class="feature-label">Real-Time Inference</p>
+                <h3 class="feature-title">Sub-Second Response Speed</h3>
+                <p class="feature-desc">Powered by our distributed inference architecture, complex multi-hop reasoning completes in milliseconds — no waiting, no throttling at scale.</p>
+                <div class="feature-number">04</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING PAGE -->
+    <div class="pricing-page" id="pricingPage">
+        <div class="pricing-header">
+            <h1>Simple, Transparent Pricing</h1>
+            <p>Choose the plan that's right for you. All plans include access to our core reasoning engine.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-name">Free</div>
+                <div class="pricing-price">₹0 / $0</div>
+                <div class="pricing-period">Forever free</div>
+                <p class="pricing-desc">Essential AI access for individuals.</p>
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 24px;">Start Free</button>
+                <ul class="pricing-features">
+                    <li>Up to 3 apps</li>
+                    <li>500 monthly credits</li>
+                    <li>Basic analytics</li>
+                    <li>Community support</li>
+                </ul>
+            </div>
+            <div class="pricing-card highlight">
+                <div class="pricing-badge">Best Value</div>
+                <div class="pricing-name">Pro</div>
+                <div class="pricing-price">₹100 / $5</div>
+                <div class="pricing-period">per month</div>
+                <p class="pricing-desc">Perfect for professionals.</p>
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 24px;">Start Pro</button>
+                <ul class="pricing-features">
+                    <li>Unlimited queries</li>
+                    <li>Advanced reasoning</li>
+                    <li>Priority support</li>
+                    <li>Custom integrations</li>
+                </ul>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-name">Pro+ (Teams)</div>
+                <div class="pricing-price">₹500 / $22</div>
+                <div class="pricing-period">per month</div>
+                <p class="pricing-desc">Designed for teams.</p>
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 24px;">Start Teams</button>
+                <ul class="pricing-features">
+                    <li>Team collaboration</li>
+                    <li>API access</li>
+                    <li>Dedicated workspace</li>
+                    <li>Analytics dashboard</li>
+                </ul>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-name">Enterprise</div>
+                <div class="pricing-price">Custom</div>
+                <div class="pricing-period">on call</div>
+                <p class="pricing-desc">For large organizations.</p>
+                <button class="btn btn-secondary" style="width: 100%; margin-bottom: 24px;">Contact Sales</button>
+                <ul class="pricing-features">
+                    <li>Custom onboarding</li>
+                    <li>SSO & security</li>
+                    <li>Dedicated account manager</li>
+                    <li>SLA guarantees</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE PAGE -->
+    <div class="profile-page" id="profilePage">
+        <div class="profile-header">
+            <h1>Account Settings</h1>
+            <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        </div>
+        <div class="profile-tabs">
+            <button class="profile-tab active" onclick="switchProfileTab('profile')">Profile</button>
+            <button class="profile-tab" onclick="switchProfileTab('billing')">Billing</button>
+            <button class="profile-tab" onclick="switchProfileTab('security')">Security</button>
+            <button class="profile-tab" onclick="switchProfileTab('danger')">Danger Zone</button>
+        </div>
+
+        <div class="profile-content active" id="profileContent">
+            <div class="profile-form">
+                <div class="form-group">
+                    <div class="form-field">
+                        <label>First Name</label>
+                        <input type="text" value="John" placeholder="Enter first name">
+                    </div>
+                    <div class="form-field">
+                        <label>Last Name</label>
+                        <input type="text" value="Doe" placeholder="Enter last name">
+                    </div>
+                </div>
+                <div class="form-group full">
+                    <div class="form-field">
+                        <label>Email</label>
+                        <input type="email" value="john@example.com" placeholder="Enter email">
+                    </div>
+                </div>
+                <div class="form-group full">
+                    <button class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-content" id="billingContent">
+            <h2 style="font-size: 24px; margin-bottom: 24px;">Current Plan: <span style="color: #8b5cf6;">Pro</span></h2>
+            <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 24px;">You are on the Pro plan. Your next billing date is Jan 15, 2025.</p>
+            <button class="btn btn-primary" style="margin-bottom: 24px;">Manage Subscription</button>
+            <div style="margin-top: 32px;">
+                <h3 style="font-size: 18px; margin-bottom: 16px;">Billing History</h3>
+                <div style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Pro Plan - Monthly</span>
+                        <span style="color: #6366f1;">₹100</span>
+                    </div>
+                    <div style="color: rgba(255, 255, 255, 0.5); font-size: 12px;">Dec 15, 2024</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-content" id="securityContent">
+            <h2 style="font-size: 24px; margin-bottom: 24px;">Password</h2>
+            <div class="profile-form" style="max-width: 400px;">
+                <div class="form-field">
+                    <label>Current Password</label>
+                    <input type="password" placeholder="Enter current password">
+                </div>
+                <div class="form-field">
+                    <label>New Password</label>
+                    <input type="password" placeholder="Enter new password">
+                </div>
+                <div class="form-field">
+                    <label>Confirm Password</label>
+                    <input type="password" placeholder="Confirm new password">
+                </div>
+                <button class="btn btn-primary">Update Password</button>
+            </div>
+        </div>
+
+        <div class="profile-content" id="dangerContent">
+            <h2 style="font-size: 24px; margin-bottom: 24px; color: #ef4444;">Danger Zone</h2>
+            <div style="border: 1px solid #ef4444; border-radius: 8px; padding: 24px; background: rgba(239, 68, 68, 0.05);">
+                <h3 style="font-size: 16px; margin-bottom: 8px; color: #ef4444;">Delete Account</h3>
+                <p style="color: rgba(255, 255, 255, 0.5); margin-bottom: 16px;">Once you delete your account, there is no going back. Please be certain.</p>
+                <button class="btn" style="background: #ef4444; color: white;">Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHAT/APP PAGE -->
+    <div class="chat-page" id="chatPage">
+        <div class="chat-container">
+            <div class="chat-sidebar">
+                <button class="chat-new-btn">+ New Chat</button>
+                <div class="chat-history">
+                    <div class="chat-history-item">How does AI work?</div>
+                    <div class="chat-history-item">Python best practices</div>
+                    <div class="chat-history-item">API design patterns</div>
+                    <div class="chat-history-item">React hooks explained</div>
+                    <div class="chat-history-item">Database optimization</div>
+                </div>
+            </div>
+            <div class="chat-main">
+                <div class="chat-header">
+                    <h2 style="font-size: 18px; font-weight: 600;">New Chat</h2>
+                    <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;">Settings</button>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai">
+                        <div class="message-content">
+                            <p>Welcome to ResonateAI! 👋</p>
+                            <p style="margin-top: 8px; font-size: 13px; color: rgba(255, 255, 255, 0.7);">I'm here to help you with complex reasoning, coding, analysis, and more. Just ask me anything!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Ask me anything...">
+                    <button class="chat-send-btn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT PAGE -->
+    <div class="page" id="aboutPage">
+        <div class="page-content">
+            <h1>About ResonateAI</h1>
+            <p>ResonateAI is building the next generation of AI systems focused on deep reasoning and transparency.</p>
+            <p style="margin-top: 20px;">Our mission is to create AI that doesn't just predict, but reasons—breaking down complex problems into verifiable steps, catching its own errors, and providing explanations you can trust.</p>
+            <h2 style="font-size: 24px; font-weight: 700; margin-top: 40px; margin-bottom: 16px;">Our Values</h2>
+            <ul style="list-style: disc; padding-left: 20px;">
+                <li style="margin-bottom: 10px;">Transparency in AI — every answer backed by visible reasoning</li>
+                <li style="margin-bottom: 10px;">Quality over speed — correct answers matter more than fast ones</li>
+                <li style="margin-bottom: 10px;">User empowerment — giving you control and understanding</li>
+                <li style="margin-bottom: 10px;">Continuous improvement — we learn from every interaction</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- CAREERS PAGE -->
+    <div class="page" id="careersPage">
+        <div class="page-content">
+            <h1>Join Our Team</h1>
+            <p>We're building the future of AI reasoning. If you're passionate about deep reasoning, scalable systems, and transparent AI, we'd love to hear from you.</p>
+            <h2 style="font-size: 24px; font-weight: 700; margin-top: 40px; margin-bottom: 16px;">Open Positions</h2>
+            <div style="margin: 20px 0; padding: 20px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; border-left: 3px solid #6366f1;">
+                <h3 style="font-size: 18px; margin-bottom: 8px;">Senior Machine Learning Engineer</h3>
+                <p style="color: rgba(255, 255, 255, 0.6);">San Francisco, CA • Full-time</p>
+            </div>
+            <div style="margin: 20px 0; padding: 20px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; border-left: 3px solid #6366f1;">
+                <h3 style="font-size: 18px; margin-bottom: 8px;">Product Manager</h3>
+                <p style="color: rgba(255, 255, 255, 0.6);">Remote</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTH MODAL -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeAuthModal()">×</button>
+            <div class="modal-header">
+                <h2 id="modalTitle">Sign In</h2>
+                <p id="modalSubtitle">Welcome back</p>
+            </div>
+            <div class="modal-tabs">
+                <button class="modal-tab active" onclick="switchAuthTab('signin')">Sign In</button>
+                <button class="modal-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+            </div>
+            <form class="modal-form" onsubmit="handleAuthSubmit(event)">
+                <div id="signinForm">
+                    <div class="form-row full">
+                        <input type="email" class="modal-input" placeholder="Email" required>
+                    </div>
+                    <div class="form-row full">
+                        <input type="password" class="modal-input" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="modal-button" style="width: 100%;">Sign In</button>
+                </div>
+                <div id="signupForm" style="display: none;">
+                    <div class="form-row">
+                        <input type="text" class="modal-input" placeholder="First Name" required>
+                        <input type="text" class="modal-input" placeholder="Last Name" required>
+                    </div>
+                    <div class="form-row full">
+                        <input type="email" class="modal-input" placeholder="Email" required>
+                    </div>
+                    <div class="form-row full">
+                        <input type="password" class="modal-input" placeholder="Password" required>
+                    </div>
+                    <div class="form-row full">
+                        <input type="password" class="modal-input" placeholder="Confirm Password" required>
+                    </div>
+                    <button type="submit" class="modal-button" style="width: 100%;">Create Account</button>
+                </div>
+            </form>
+            <div class="modal-footer">
+                By continuing, you agree to our <a onclick="navigateTo('privacy')">Privacy Policy</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Product</h3>
+                    <ul>
+                        <li><a onclick="scrollToSection('features')">Features</a></li>
+                        <li><a onclick="navigateTo('pricing')">Pricing</a></li>
+                        <li><a onclick="scrollToSection('features')">Changelog</a></li>
+                        <li><a onclick="scrollToSection('features')">Roadmap</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Company</h3>
+                    <ul>
+                        <li><a onclick="navigateTo('about')">About</a></li>
+                        <li><a onclick="navigateTo('careers')">Careers</a></li>
+                        <li><a onclick="navigateTo('press')">Press</a></li>
+                        <li><a onclick="scrollToSection('features')">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a onclick="navigateTo('privacy')">Privacy Policy</a></li>
+                        <li><a onclick="navigateTo('terms')">Terms of Service</a></li>
+                        <li><a onclick="navigateTo('cookies')">Cookie Policy</a></li>
+                        <li><a onclick="navigateTo('security')">Security</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Social</h3>
+                    <div class="social-links">
+                        <a href="#" title="LinkedIn">in</a>
+                        <a href="#" title="Twitter">𝕏</a>
+                        <a href="#" title="GitHub">⚙</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p style="color: rgba(255, 255, 255, 0.5); font-size: 14px;">© 2025 ResonateAI. All rights reserved.</p>
+                <p style="color: rgba(255, 255, 255, 0.5); font-size: 12px;">Made with 💜 by ResonateAI Team</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // STATE
+        let currentPage = 'home';
+        let isLoggedIn = false;
+        let userAuthenticated = false;
+
+        // TYPING ANIMATION
+        const WORDS = ['truly reasons.', 'thinks deeply.', 'earns your trust.', 'changes everything.'];
+        let wordIdx = 0;
+        let charIdx = 0;
+        let isDeleting = false;
+        const typingEl = document.getElementById('typingText');
+
+        function typeAnimation() {
+            const word = WORDS[wordIdx];
+            if (!isDeleting && charIdx < word.length) {
+                typingEl.textContent = word.slice(0, charIdx + 1);
+                charIdx++;
+                setTimeout(typeAnimation, 60);
+            } else if (!isDeleting && charIdx === word.length) {
+                setTimeout(() => { isDeleting = true; typeAnimation(); }, 2000);
+            } else if (isDeleting && charIdx > 0) {
+                typingEl.textContent = word.slice(0, charIdx - 1);
+                charIdx--;
+                setTimeout(typeAnimation, 35);
+            } else if (isDeleting && charIdx === 0) {
+                wordIdx = (wordIdx + 1) % WORDS.length;
+                isDeleting = false;
+                typeAnimation();
+            }
+        }
+        typeAnimation();
+
+        // NAVBAR SCROLL
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 40) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // NAVIGATION
+        function navigateTo(page) {
+            currentPage = page;
+            // Hide all pages
+            document.querySelectorAll('.page, .pricing-page, .profile-page, .chat-page, .hero, .features').forEach(el => el.classList.remove('active'));
+            
+            if (page === 'home') {
+                document.getElementById('home').classList.add('active');
+                document.querySelector('.features').classList.add('active');
+            } else if (page === 'pricing') {
+                document.getElementById('pricingPage').classList.add('active');
+                window.scrollTo(0, 0);
+            } else if (page === 'profile') {
+                if (!userAuthenticated) {
+                    showAuthModal('signin');
+                    return;
+                }
+                document.getElementById('profilePage').classList.add('active');
+                window.scrollTo(0, 0);
+            } else if (page === 'app' || page === 'chat') {
+                if (!userAuthenticated) {
+                    showAuthModal('signin');
+                    return;
+                }
+                document.getElementById('chatPage').classList.add('active');
+            } else {
+                const pageEl = document.getElementById(page + 'Page');
+                if (pageEl) pageEl.classList.add('active');
+            }
+            window.scrollTo(0, 0);
+        }
+
+        function scrollToSection(sectionId) {
+            const el = document.getElementById(sectionId);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // AUTH
+        function showAuthModal(tab) {
+            document.getElementById('authModal').classList.add('active');
+            switchAuthTab(tab);
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+
+        function switchAuthTab(tab) {
+            const signinForm = document.getElementById('signinForm');
+            const signupForm = document.getElementById('signupForm');
+            const tabs = document.querySelectorAll('.modal-tab');
+            const title = document.getElementById('modalTitle');
+            const subtitle = document.getElementById('modalSubtitle');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'signin') {
+                signinForm.style.display = 'flex';
+                signupForm.style.display = 'none';
+                tabs[0].classList.add('active');
+                title.textContent = 'Sign In';
+                subtitle.textContent = 'Welcome back';
+            } else {
+                signinForm.style.display = 'none';
+                signupForm.style.display = 'flex';
+                tabs[1].classList.add('active');
+                title.textContent = 'Create Account';
+                subtitle.textContent = 'Join ResonateAI today';
+            }
+        }
+
+        function handleAuthSubmit(event) {
+            event.preventDefault();
+            userAuthenticated = true;
+            closeAuthModal();
+            navigateTo('app');
+            alert('Login successful! Redirecting to dashboard...');
+        }
+
+        // PROFILE
+        function switchProfileTab(tab) {
+            document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.profile-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            
+            const contentMap = {
+                'profile': 'profileContent',
+                'billing': 'billingContent',
+                'security': 'securityContent',
+                'danger': 'dangerContent'
+            };
+            
+            if (contentMap[tab]) {
+                document.getElementById(contentMap[tab]).classList.add('active');
+            }
+        }
+
+        function logout() {
+            userAuthenticated = false;
+            navigateTo('home');
+            alert('Logged out successfully!');
+        }
+
+        // CHAT
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            // User message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.innerHTML = `<div class="message-content">${message}</div>`;
+            messagesContainer.appendChild(userMsg);
+            
+            // AI response (simulated)
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'message ai';
+                const responses = [
+                    'That\'s a great question! Let me break this down step by step...',
+                    'I\'ll analyze this using my reasoning engine and provide a detailed answer.',
+                    'Interesting point! Here\'s what I found through deep reasoning...',
+                    'Let me think through this systematically and provide you with verifiable insights.'
+                ];
+                const response = responses[Math.floor(Math.random() * responses.length)];
+                aiMsg.innerHTML = `<div class="message-content">${response}</div>`;
+                messagesContainer.appendChild(aiMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 600);
+            
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Allow Enter to send message
+        document.addEventListener('keypress', function(event) {
+            const input = document.getElementById('chatInput');
+            if (event.key === 'Enter' && document.getElementById('chatPage').classList.contains('active')) {
+                if (input === document.activeElement) {
+                    sendMessage();
+                }
+            }
+        });
+
+        // Mobile menu
+        function toggleMenu() {
+            // Mobile menu toggle (placeholder)
+            alert('Mobile menu - expand navigation');
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            navigateTo('home');
+        });
+    </script>
+</body>
+</html>
