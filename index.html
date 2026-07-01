@@ -120,6 +120,8 @@
             flex-direction: column;
             gap: 5px;
             cursor: pointer;
+            z-index: 210;
+            padding: 6px;
         }
 
         .menu-toggle span {
@@ -129,11 +131,82 @@
             transition: all 0.3s;
         }
 
+        .menu-toggle.open span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .menu-toggle.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.open span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: min(300px, 80vw);
+            background: rgba(10, 10, 20, 0.98);
+            backdrop-filter: blur(24px) saturate(160%);
+            border-left: 1px solid rgba(99, 102, 241, 0.15);
+            z-index: 205;
+            padding: 90px 28px 32px;
+            flex-direction: column;
+            gap: 8px;
+            transform: translateX(100%);
+            transition: transform 0.35s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-nav.open {
+            display: flex;
+            transform: translateX(0);
+        }
+
+        .mobile-nav a {
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-size: 16px;
+            padding: 14px 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+        }
+
+        .mobile-nav a.active {
+            color: #6366f1;
+        }
+
+        .mobile-nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .mobile-nav-buttons .btn {
+            width: 100%;
+        }
+
+        .nav-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 204;
+        }
+
+        .nav-backdrop.open {
+            display: block;
+        }
+
         /* ==================== HERO ==================== */
         .hero {
             display: none;
             min-height: 100vh;
-            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -501,7 +574,7 @@
         }
 
         .profile-header h1 {
-            font-size: 32px;
+            font-size: clamp(24px, 5vw, 32px);
             font-weight: 700;
             font-family: 'Syne', sans-serif;
         }
@@ -591,7 +664,7 @@
         .chat-page {
             display: none;
             height: 100vh;
-            display: flex;
+            height: 100dvh;
             flex-direction: column;
             background: #07080f;
             margin-top: 0;
@@ -654,6 +727,12 @@
             color: #fff;
         }
 
+        .chat-history-item.active {
+            background: rgba(99, 102, 241, 0.18);
+            border-color: rgba(99, 102, 241, 0.4);
+            color: #fff;
+        }
+
         .chat-main {
             flex: 1;
             display: flex;
@@ -666,6 +745,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
+        }
+
+        .chat-header h2 {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-width: 0;
+        }
+
+        .chat-header > div:first-child {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .chat-header .btn {
+            flex-shrink: 0;
         }
 
         .chat-messages {
@@ -846,7 +942,7 @@
         }
 
         .modal-header h2 {
-            font-size: 28px;
+            font-size: clamp(22px, 6vw, 28px);
             font-weight: 700;
             margin-bottom: 8px;
             font-family: 'Syne', sans-serif;
@@ -884,6 +980,12 @@
         }
 
         .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .auth-form-section {
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -1052,7 +1154,7 @@
         }
 
         .page h1 {
-            font-size: 42px;
+            font-size: clamp(28px, 6vw, 42px);
             font-weight: 700;
             margin-bottom: 24px;
             font-family: 'Syne', sans-serif;
@@ -1065,16 +1167,87 @@
             margin-bottom: 16px;
         }
 
+        /* ==================== TOAST ==================== */
+        .toast-stack {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: min(340px, calc(100vw - 32px));
+        }
+
+        .toast {
+            background: rgba(20, 20, 35, 0.97);
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            border-left: 3px solid #6366f1;
+            border-radius: 10px;
+            padding: 14px 18px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            animation: toastIn 0.3s ease;
+        }
+
+        .toast.leaving {
+            animation: toastOut 0.25s ease forwards;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(10px); }
+        }
+
+        /* ==================== CHAT SIDEBAR TOGGLE (mobile) ==================== */
+        .chat-sidebar-toggle {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 8px;
+            padding: 8px 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .chat-sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 150;
+        }
+
+        .chat-sidebar-backdrop.open {
+            display: block;
+        }
+
         /* ==================== RESPONSIVE ==================== */
-        @media (max-width: 768px) {
+        /* Nav collapses earlier than the rest of the layout so tablets
+           and landscape phones (769px-900px) also get the hamburger menu
+           instead of squeezing 5 links + 2 buttons into one row */
+        @media (max-width: 900px) {
             .nav-links {
+                display: none;
+            }
+
+            .nav-buttons {
                 display: none;
             }
 
             .menu-toggle {
                 display: flex;
             }
+        }
 
+        @media (max-width: 768px) {
             .pricing-grid {
                 grid-template-columns: 1fr;
             }
@@ -1083,8 +1256,25 @@
                 transform: scale(1);
             }
 
+            .chat-sidebar-toggle {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+
             .chat-sidebar {
-                width: 200px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: min(260px, 78vw);
+                z-index: 160;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .chat-sidebar.open {
+                transform: translateX(0);
             }
 
             .message-content {
@@ -1097,6 +1287,89 @@
 
             .form-group, .form-row {
                 grid-template-columns: 1fr;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .hero-buttons .btn {
+                width: 100%;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .profile-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                white-space: nowrap;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .toast-stack {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+                max-width: none;
+            }
+
+            .btn {
+                padding: 12px 20px;
+            }
+
+            .modal-tab {
+                padding: 14px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                padding: 14px 16px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .hero {
+                padding: 90px 16px 48px;
+            }
+
+            .hero p {
+                margin: 18px 0 24px;
+            }
+
+            .feature-card, .pricing-card, .modal {
+                padding: 24px 20px;
+            }
+
+            .chat-header {
+                padding: 12px 16px;
+            }
+
+            .chat-messages {
+                padding: 16px;
+            }
+
+            .chat-input-area {
+                padding: 14px 16px;
+            }
+
+            .message-content {
+                max-width: 92%;
+            }
+
+            .modal-tabs {
+                gap: 10px;
             }
         }
     </style>
@@ -1117,11 +1390,23 @@
                 <button class="btn btn-secondary" onclick="showAuthModal('signin')">Sign In</button>
                 <button class="btn btn-primary" onclick="showAuthModal('getstarted')">Get Started</button>
             </div>
-            <div class="menu-toggle" onclick="toggleMenu()">
+            <div class="menu-toggle" id="menuToggle" onclick="toggleMenu()">
                 <span></span><span></span><span></span>
             </div>
         </div>
     </nav>
+    <div class="nav-backdrop" id="navBackdrop" onclick="closeMenu()"></div>
+    <div class="mobile-nav" id="mobileNav">
+        <a onclick="scrollToSection('features'); closeMenu();">Features</a>
+        <a onclick="scrollToSection('process'); closeMenu();">Process</a>
+        <a onclick="scrollToSection('use-cases'); closeMenu();">Use Cases</a>
+        <a onclick="navigateTo('pricing'); closeMenu();">Pricing</a>
+        <a onclick="navigateTo('about'); closeMenu();">About</a>
+        <div class="mobile-nav-buttons">
+            <button class="btn btn-secondary" onclick="showAuthModal('signin'); closeMenu();">Sign In</button>
+            <button class="btn btn-primary" onclick="showAuthModal('getstarted'); closeMenu();">Get Started</button>
+        </div>
+    </div>
 
     <!-- HERO SECTION -->
     <section class="hero active" id="home">
@@ -1186,6 +1471,100 @@
         </div>
     </section>
 
+    <!-- PROCESS SECTION -->
+    <section class="features" id="process">
+        <div class="features-header">
+            <p>How It Works</p>
+            <h2>Reasoning you can <span class="subtitle">follow.</span></h2>
+            <p style="color: rgba(255, 255, 255, 0.4); margin-top: 16px;">Every query moves through four transparent stages before you see an answer.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                </div>
+                <p class="feature-label">Step 01</p>
+                <h3 class="feature-title">Parse the Query</h3>
+                <p class="feature-desc">Your question is broken into sub-claims, constraints, and the underlying intent before any reasoning begins.</p>
+                <div class="feature-number">01</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </div>
+                <p class="feature-label">Step 02</p>
+                <h3 class="feature-title">Chain the Logic</h3>
+                <p class="feature-desc">Each sub-claim is reasoned through sequentially, with intermediate conclusions checked against each other.</p>
+                <div class="feature-number">02</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                </div>
+                <p class="feature-label">Step 03</p>
+                <h3 class="feature-title">Verify & Cite</h3>
+                <p class="feature-desc">Conclusions are checked for contradictions and matched back to the sources or rules that support them.</p>
+                <div class="feature-number">03</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                </div>
+                <p class="feature-label">Step 04</p>
+                <h3 class="feature-title">Deliver the Answer</h3>
+                <p class="feature-desc">You get a clear answer plus the reasoning trace — so you can see exactly how ResonateAI got there.</p>
+                <div class="feature-number">04</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- USE CASES SECTION -->
+    <section class="features" id="use-cases">
+        <div class="features-header">
+            <p>Where It Fits</p>
+            <h2>Built for real <span class="subtitle">work.</span></h2>
+            <p style="color: rgba(255, 255, 255, 0.4); margin-top: 16px;">A few of the ways teams put ResonateAI's reasoning engine to use.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" /></svg>
+                </div>
+                <p class="feature-label">Research</p>
+                <h3 class="feature-title">Literature Review</h3>
+                <p class="feature-desc">Summarize and cross-check findings across papers with a visible chain of reasoning for every claim.</p>
+                <div class="feature-number">01</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 8l-4 4 4 4" /></svg>
+                </div>
+                <p class="feature-label">Engineering</p>
+                <h3 class="feature-title">Code Review & Debugging</h3>
+                <p class="feature-desc">Trace bugs through logic paths instead of pattern-matching guesses, with reasoning you can audit.</p>
+                <div class="feature-number">02</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                </div>
+                <p class="feature-label">Operations</p>
+                <h3 class="feature-title">Data Analysis</h3>
+                <p class="feature-desc">Ask complex, multi-step questions about your data and get an answer that shows its work.</p>
+                <div class="feature-number">03</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422A12.083 12.083 0 0121 12c0 3.6-1.6 6.8-4.16 8.98L12 24l-4.84-3.02A12.083 12.083 0 013 12c0-1.24.24-2.42.66-3.5L12 14z" /></svg>
+                </div>
+                <p class="feature-label">Education</p>
+                <h3 class="feature-title">Step-by-Step Tutoring</h3>
+                <p class="feature-desc">Explain how an answer was reached, not just what the answer is — built for learning, not shortcuts.</p>
+                <div class="feature-number">04</div>
+            </div>
+        </div>
+    </section>
+
     <!-- PRICING PAGE -->
     <div class="pricing-page" id="pricingPage">
         <div class="pricing-header">
@@ -1198,7 +1577,7 @@
                 <div class="pricing-price">₹0 / $0</div>
                 <div class="pricing-period">Forever free</div>
                 <p class="pricing-desc">Essential AI access for individuals.</p>
-                <button class="btn btn-primary" style="width: 100%; margin-bottom: 24px;">Start Free</button>
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 24px;" onclick="selectPlan('Free')">Start Free</button>
                 <ul class="pricing-features">
                     <li>Up to 3 apps</li>
                     <li>500 monthly credits</li>
@@ -1212,7 +1591,7 @@
                 <div class="pricing-price">₹100 / $5</div>
                 <div class="pricing-period">per month</div>
                 <p class="pricing-desc">Perfect for professionals.</p>
-                <button class="btn btn-primary" style="width: 100%; margin-bottom: 24px;">Start Pro</button>
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 24px;" onclick="selectPlan('Pro')">Start Pro</button>
                 <ul class="pricing-features">
                     <li>Unlimited queries</li>
                     <li>Advanced reasoning</li>
@@ -1225,7 +1604,7 @@
                 <div class="pricing-price">₹500 / $22</div>
                 <div class="pricing-period">per month</div>
                 <p class="pricing-desc">Designed for teams.</p>
-                <button class="btn btn-primary" style="width: 100%; margin-bottom: 24px;">Start Teams</button>
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 24px;" onclick="selectPlan('Pro+ (Teams)')">Start Teams</button>
                 <ul class="pricing-features">
                     <li>Team collaboration</li>
                     <li>API access</li>
@@ -1238,7 +1617,7 @@
                 <div class="pricing-price">Custom</div>
                 <div class="pricing-period">on call</div>
                 <p class="pricing-desc">For large organizations.</p>
-                <button class="btn btn-secondary" style="width: 100%; margin-bottom: 24px;">Contact Sales</button>
+                <button class="btn btn-secondary" style="width: 100%; margin-bottom: 24px;" onclick="contactSales()">Contact Sales</button>
                 <ul class="pricing-features">
                     <li>Custom onboarding</li>
                     <li>SSO & security</li>
@@ -1256,10 +1635,10 @@
             <button class="btn btn-secondary" onclick="logout()">Logout</button>
         </div>
         <div class="profile-tabs">
-            <button class="profile-tab active" onclick="switchProfileTab('profile')">Profile</button>
-            <button class="profile-tab" onclick="switchProfileTab('billing')">Billing</button>
-            <button class="profile-tab" onclick="switchProfileTab('security')">Security</button>
-            <button class="profile-tab" onclick="switchProfileTab('danger')">Danger Zone</button>
+            <button class="profile-tab active" onclick="switchProfileTab('profile', this)">Profile</button>
+            <button class="profile-tab" onclick="switchProfileTab('billing', this)">Billing</button>
+            <button class="profile-tab" onclick="switchProfileTab('security', this)">Security</button>
+            <button class="profile-tab" onclick="switchProfileTab('danger', this)">Danger Zone</button>
         </div>
 
         <div class="profile-content active" id="profileContent">
@@ -1281,15 +1660,15 @@
                     </div>
                 </div>
                 <div class="form-group full">
-                    <button class="btn btn-primary">Save Changes</button>
+                    <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
                 </div>
             </div>
         </div>
 
         <div class="profile-content" id="billingContent">
             <h2 style="font-size: 24px; margin-bottom: 24px;">Current Plan: <span style="color: #8b5cf6;">Pro</span></h2>
-            <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 24px;">You are on the Pro plan. Your next billing date is Jan 15, 2025.</p>
-            <button class="btn btn-primary" style="margin-bottom: 24px;">Manage Subscription</button>
+            <p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 24px;">You are on the Pro plan. Your next billing date is Aug 15, 2026.</p>
+            <button class="btn btn-primary" style="margin-bottom: 24px;" onclick="manageSubscription()">Manage Subscription</button>
             <div style="margin-top: 32px;">
                 <h3 style="font-size: 18px; margin-bottom: 16px;">Billing History</h3>
                 <div style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 16px; margin-bottom: 12px;">
@@ -1297,7 +1676,7 @@
                         <span>Pro Plan - Monthly</span>
                         <span style="color: #6366f1;">₹100</span>
                     </div>
-                    <div style="color: rgba(255, 255, 255, 0.5); font-size: 12px;">Dec 15, 2024</div>
+                    <div style="color: rgba(255, 255, 255, 0.5); font-size: 12px;">Jul 15, 2026</div>
                 </div>
             </div>
         </div>
@@ -1317,7 +1696,7 @@
                     <label>Confirm Password</label>
                     <input type="password" placeholder="Confirm new password">
                 </div>
-                <button class="btn btn-primary">Update Password</button>
+                <button class="btn btn-primary" onclick="updatePassword()">Update Password</button>
             </div>
         </div>
 
@@ -1326,28 +1705,32 @@
             <div style="border: 1px solid #ef4444; border-radius: 8px; padding: 24px; background: rgba(239, 68, 68, 0.05);">
                 <h3 style="font-size: 16px; margin-bottom: 8px; color: #ef4444;">Delete Account</h3>
                 <p style="color: rgba(255, 255, 255, 0.5); margin-bottom: 16px;">Once you delete your account, there is no going back. Please be certain.</p>
-                <button class="btn" style="background: #ef4444; color: white;">Delete Account</button>
+                <button class="btn" style="background: #ef4444; color: white;" onclick="confirmDeleteAccount()">Delete Account</button>
             </div>
         </div>
     </div>
 
     <!-- CHAT/APP PAGE -->
     <div class="chat-page" id="chatPage">
+        <div class="chat-sidebar-backdrop" id="chatSidebarBackdrop" onclick="toggleChatSidebar()"></div>
         <div class="chat-container">
-            <div class="chat-sidebar">
-                <button class="chat-new-btn">+ New Chat</button>
-                <div class="chat-history">
-                    <div class="chat-history-item">How does AI work?</div>
-                    <div class="chat-history-item">Python best practices</div>
-                    <div class="chat-history-item">API design patterns</div>
-                    <div class="chat-history-item">React hooks explained</div>
-                    <div class="chat-history-item">Database optimization</div>
+            <div class="chat-sidebar" id="chatSidebar">
+                <button class="chat-new-btn" onclick="newChat()">+ New Chat</button>
+                <div class="chat-history" id="chatHistoryList">
+                    <div class="chat-history-item" onclick="loadChatHistory(this)">How does AI work?</div>
+                    <div class="chat-history-item" onclick="loadChatHistory(this)">Python best practices</div>
+                    <div class="chat-history-item" onclick="loadChatHistory(this)">API design patterns</div>
+                    <div class="chat-history-item" onclick="loadChatHistory(this)">React hooks explained</div>
+                    <div class="chat-history-item" onclick="loadChatHistory(this)">Database optimization</div>
                 </div>
             </div>
             <div class="chat-main">
                 <div class="chat-header">
-                    <h2 style="font-size: 18px; font-weight: 600;">New Chat</h2>
-                    <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;">Settings</button>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <button class="chat-sidebar-toggle" onclick="toggleChatSidebar()" aria-label="Toggle chat history">☰</button>
+                        <h2 id="chatTitle" style="font-size: 18px; font-weight: 600;">New Chat</h2>
+                    </div>
+                    <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;" onclick="toggleChatSettings()">Settings</button>
                 </div>
                 <div class="chat-messages" id="chatMessages">
                     <div class="message ai">
@@ -1398,6 +1781,80 @@
         </div>
     </div>
 
+    <!-- PRESS PAGE -->
+    <div class="page" id="pressPage">
+        <div class="page-content">
+            <h1>Press</h1>
+            <p>Media inquiries, brand assets, and company news for ResonateAI.</p>
+            <h2 style="font-size: 24px; font-weight: 700; margin-top: 40px; margin-bottom: 16px;">In the News</h2>
+            <div style="margin: 20px 0; padding: 20px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; border-left: 3px solid #6366f1;">
+                <h3 style="font-size: 18px; margin-bottom: 8px;">ResonateAI raises Seed round to build transparent reasoning models</h3>
+                <p style="color: rgba(255, 255, 255, 0.6);">Demo placeholder — replace with real coverage.</p>
+            </div>
+            <p style="margin-top: 24px;">For press inquiries, contact <span style="color: #6366f1;">press@resonateai.example</span> (demo).</p>
+        </div>
+    </div>
+
+    <!-- PRIVACY PAGE -->
+    <div class="page" id="privacyPage">
+        <div class="page-content">
+            <h1>Privacy Policy</h1>
+            <p>This is placeholder policy text for demo purposes only.</p>
+            <p style="margin-top: 20px;">ResonateAI collects only the information needed to operate the product — account details, usage data, and content you submit for reasoning tasks. We never sell personal data to third parties.</p>
+            <h2 style="font-size: 24px; font-weight: 700; margin-top: 40px; margin-bottom: 16px;">What We Collect</h2>
+            <ul style="list-style: disc; padding-left: 20px;">
+                <li style="margin-bottom: 10px;">Account information (name, email)</li>
+                <li style="margin-bottom: 10px;">Usage and performance analytics</li>
+                <li style="margin-bottom: 10px;">Content submitted for reasoning tasks</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- TERMS PAGE -->
+    <div class="page" id="termsPage">
+        <div class="page-content">
+            <h1>Terms of Service</h1>
+            <p>This is placeholder terms-of-service text for demo purposes only.</p>
+            <p style="margin-top: 20px;">By using ResonateAI, you agree to use the service responsibly and in accordance with applicable law. Accounts found in violation of these terms may be suspended.</p>
+            <h2 style="font-size: 24px; font-weight: 700; margin-top: 40px; margin-bottom: 16px;">Acceptable Use</h2>
+            <ul style="list-style: disc; padding-left: 20px;">
+                <li style="margin-bottom: 10px;">No unlawful, harmful, or abusive use of the platform</li>
+                <li style="margin-bottom: 10px;">No attempts to reverse engineer the reasoning engine</li>
+                <li style="margin-bottom: 10px;">Respect rate limits and fair-use guidelines</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- COOKIES PAGE -->
+    <div class="page" id="cookiesPage">
+        <div class="page-content">
+            <h1>Cookie Policy</h1>
+            <p>This is placeholder cookie-policy text for demo purposes only.</p>
+            <p style="margin-top: 20px;">We use cookies to keep you signed in, remember preferences, and understand how the product is used. You can control cookies through your browser settings.</p>
+            <h2 style="font-size: 24px; font-weight: 700; margin-top: 40px; margin-bottom: 16px;">Cookie Types</h2>
+            <ul style="list-style: disc; padding-left: 20px;">
+                <li style="margin-bottom: 10px;">Essential — required for login and core functionality</li>
+                <li style="margin-bottom: 10px;">Analytics — helps us understand product usage</li>
+                <li style="margin-bottom: 10px;">Preference — remembers your settings</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SECURITY PAGE -->
+    <div class="page" id="securityPage">
+        <div class="page-content">
+            <h1>Security</h1>
+            <p>This is placeholder security information for demo purposes only.</p>
+            <p style="margin-top: 20px;">ResonateAI takes data security seriously, using encryption in transit and at rest, regular audits, and least-privilege access controls.</p>
+            <h2 style="font-size: 24px; font-weight: 700; margin-top: 40px; margin-bottom: 16px;">Our Commitments</h2>
+            <ul style="list-style: disc; padding-left: 20px;">
+                <li style="margin-bottom: 10px;">Encryption in transit and at rest</li>
+                <li style="margin-bottom: 10px;">Regular third-party security audits</li>
+                <li style="margin-bottom: 10px;">Responsible disclosure program</li>
+            </ul>
+        </div>
+    </div>
+
     <!-- AUTH MODAL -->
     <div class="modal-overlay" id="authModal">
         <div class="modal">
@@ -1411,7 +1868,7 @@
                 <button class="modal-tab" onclick="switchAuthTab('signup')">Sign Up</button>
             </div>
             <form class="modal-form" onsubmit="handleAuthSubmit(event)">
-                <div id="signinForm">
+                <div id="signinForm" class="auth-form-section">
                     <div class="form-row full">
                         <input type="email" class="modal-input" placeholder="Email" required>
                     </div>
@@ -1420,7 +1877,7 @@
                     </div>
                     <button type="submit" class="modal-button" style="width: 100%;">Sign In</button>
                 </div>
-                <div id="signupForm" style="display: none;">
+                <div id="signupForm" class="auth-form-section" style="display: none;">
                     <div class="form-row">
                         <input type="text" class="modal-input" placeholder="First Name" required>
                         <input type="text" class="modal-input" placeholder="Last Name" required>
@@ -1477,18 +1934,21 @@
                 <div class="footer-section">
                     <h3>Social</h3>
                     <div class="social-links">
-                        <a href="#" title="LinkedIn">in</a>
-                        <a href="#" title="Twitter">𝕏</a>
-                        <a href="#" title="GitHub">⚙</a>
+                        <a href="#" title="LinkedIn" onclick="event.preventDefault(); showToast('LinkedIn link (demo)')">in</a>
+                        <a href="#" title="Twitter" onclick="event.preventDefault(); showToast('Twitter/X link (demo)')">𝕏</a>
+                        <a href="#" title="GitHub" onclick="event.preventDefault(); showToast('GitHub link (demo)')">⚙</a>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p style="color: rgba(255, 255, 255, 0.5); font-size: 14px;">© 2025 ResonateAI. All rights reserved.</p>
+                <p style="color: rgba(255, 255, 255, 0.5); font-size: 14px;">© 2026 ResonateAI. All rights reserved.</p>
                 <p style="color: rgba(255, 255, 255, 0.5); font-size: 12px;">Made with 💜 by ResonateAI Team</p>
             </div>
         </div>
     </footer>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-stack" id="toastStack"></div>
 
     <script>
         // STATE
@@ -1536,12 +1996,13 @@
         // NAVIGATION
         function navigateTo(page) {
             currentPage = page;
+            closeMenu();
             // Hide all pages
             document.querySelectorAll('.page, .pricing-page, .profile-page, .chat-page, .hero, .features').forEach(el => el.classList.remove('active'));
             
             if (page === 'home') {
                 document.getElementById('home').classList.add('active');
-                document.querySelector('.features').classList.add('active');
+                document.querySelectorAll('.features').forEach(el => el.classList.add('active'));
             } else if (page === 'pricing') {
                 document.getElementById('pricingPage').classList.add('active');
                 window.scrollTo(0, 0);
@@ -1566,6 +2027,12 @@
         }
 
         function scrollToSection(sectionId) {
+            // Sections like #process / #use-cases only exist within the home view
+            if (currentPage !== 'home') {
+                navigateTo('home');
+                setTimeout(() => scrollToSection(sectionId), 50);
+                return;
+            }
             const el = document.getElementById(sectionId);
             if (el) {
                 el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1611,15 +2078,15 @@
             userAuthenticated = true;
             closeAuthModal();
             navigateTo('app');
-            alert('Login successful! Redirecting to dashboard...');
+            showToast('Signed in successfully — welcome to your dashboard (demo)');
         }
 
         // PROFILE
-        function switchProfileTab(tab) {
+        function switchProfileTab(tab, btnEl) {
             document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.profile-content').forEach(c => c.classList.remove('active'));
             
-            event.target.classList.add('active');
+            if (btnEl) btnEl.classList.add('active');
             
             const contentMap = {
                 'profile': 'profileContent',
@@ -1633,13 +2100,51 @@
             }
         }
 
+        function saveProfile() {
+            showToast('Profile changes saved (demo)');
+        }
+
+        function manageSubscription() {
+            showToast('Subscription management would open here (demo)');
+        }
+
+        function updatePassword() {
+            showToast('Password updated successfully (demo)');
+        }
+
+        function confirmDeleteAccount() {
+            if (confirm('This is a demo — no account will actually be deleted. Continue anyway?')) {
+                showToast('Account deletion simulated (demo)');
+            }
+        }
+
         function logout() {
             userAuthenticated = false;
             navigateTo('home');
-            alert('Logged out successfully!');
+            showToast('Logged out successfully');
+        }
+
+        // PRICING
+        function selectPlan(planName) {
+            if (!userAuthenticated) {
+                showAuthModal('getstarted');
+                showToast(`Create an account to start the ${planName} plan (demo)`);
+                return;
+            }
+            showToast(`You selected the ${planName} plan (demo)`);
+        }
+
+        function contactSales() {
+            showToast('Our sales team would reach out shortly (demo)');
         }
 
         // CHAT
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
         function sendMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
@@ -1651,7 +2156,7 @@
             // User message
             const userMsg = document.createElement('div');
             userMsg.className = 'message user';
-            userMsg.innerHTML = `<div class="message-content">${message}</div>`;
+            userMsg.innerHTML = `<div class="message-content">${escapeHtml(message)}</div>`;
             messagesContainer.appendChild(userMsg);
             
             // AI response (simulated)
@@ -1674,6 +2179,45 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
+        function newChat() {
+            document.querySelectorAll('.chat-history-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('chatTitle').textContent = 'New Chat';
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="message ai">
+                    <div class="message-content">
+                        <p>Welcome to ResonateAI! 👋</p>
+                        <p style="margin-top: 8px; font-size: 13px; color: rgba(255, 255, 255, 0.7);">I'm here to help you with complex reasoning, coding, analysis, and more. Just ask me anything!</p>
+                    </div>
+                </div>`;
+            if (window.innerWidth <= 768) toggleChatSidebar(false);
+        }
+
+        function loadChatHistory(itemEl) {
+            document.querySelectorAll('.chat-history-item').forEach(i => i.classList.remove('active'));
+            itemEl.classList.add('active');
+            document.getElementById('chatTitle').textContent = itemEl.textContent;
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="message user">
+                    <div class="message-content">${escapeHtml(itemEl.textContent)}</div>
+                </div>
+                <div class="message ai">
+                    <div class="message-content">Here's a detailed, reasoned answer to "${escapeHtml(itemEl.textContent)}" — this is a simulated conversation for demo purposes.</div>
+                </div>`;
+            if (window.innerWidth <= 768) toggleChatSidebar(false);
+        }
+
+        function toggleChatSettings() {
+            showToast('Chat settings panel would open here (demo)');
+        }
+
+        function toggleChatSidebar(forceState) {
+            const sidebar = document.getElementById('chatSidebar');
+            const backdrop = document.getElementById('chatSidebarBackdrop');
+            const shouldOpen = typeof forceState === 'boolean' ? forceState : !sidebar.classList.contains('open');
+            sidebar.classList.toggle('open', shouldOpen);
+            backdrop.classList.toggle('open', shouldOpen);
+        }
+
         // Allow Enter to send message
         document.addEventListener('keypress', function(event) {
             const input = document.getElementById('chatInput');
@@ -1684,10 +2228,34 @@
             }
         });
 
-        // Mobile menu
+        // MOBILE NAV MENU
         function toggleMenu() {
-            // Mobile menu toggle (placeholder)
-            alert('Mobile menu - expand navigation');
+            const toggle = document.getElementById('menuToggle');
+            const mobileNav = document.getElementById('mobileNav');
+            const backdrop = document.getElementById('navBackdrop');
+            const isOpen = mobileNav.classList.contains('open');
+            toggle.classList.toggle('open', !isOpen);
+            mobileNav.classList.toggle('open', !isOpen);
+            backdrop.classList.toggle('open', !isOpen);
+        }
+
+        function closeMenu() {
+            document.getElementById('menuToggle').classList.remove('open');
+            document.getElementById('mobileNav').classList.remove('open');
+            document.getElementById('navBackdrop').classList.remove('open');
+        }
+
+        // TOAST NOTIFICATIONS
+        function showToast(message) {
+            const stack = document.getElementById('toastStack');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            stack.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('leaving');
+                setTimeout(() => toast.remove(), 250);
+            }, 3200);
         }
 
         // Initialize
